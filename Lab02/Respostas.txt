@@ -1,0 +1,12 @@
+1.1 a) r é calculado 10 vezes. No entanto podem aparecer valores repetidos. Foi o caso no teste realizado. Havia 2 86
+    b) Cada thread tem a sua própria cópia do código, ou seja, o código irá executar independentemente para cada thread, tantas vezes quantos threads criados com essa start function.
+    c) Todos os threads são terminados (capítulo 29.4)
+    d)  thread - Buffer que guarda o ID do thread para uso por outros threads
+        attr - apontador para estrutura pthread_attr_t que determina os atributos do thread. Pode ser initializado usando pthread_attr_init
+        start_routine(void *) - Função chamada pelo thread após a sua criação
+        arg - argumentos da start_routine
+
+2.1 a) Agora vem tudo por ordem
+    b) Agora esperamos que o tread termine
+    c) Não
+
