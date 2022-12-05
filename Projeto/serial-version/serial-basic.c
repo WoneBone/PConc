@@ -17,59 +17,19 @@
 #define THUMB_DIR "./serial-Thumbnail/"
 #define WATER_DIR "./serial-Watermark/"
 
-
-/******************************************************************************
- * main()
- *
- * Arguments: (none)
- * Returns: 0 in case of sucess, positive number in case of failure
- * Side-Effects: creates thumbnail, resized copy and watermarked copies
- *               of images
- *
- * Description: implementation of the complex serial version 
- *              This application only works for a fixed pre-defined set of files
- *
- *****************************************************************************/
-int main(){
+typedef struct twint{
+	int n1;
+	int n2;
+}twint;
 
 	/* array containg the names of files to be processed	 */
-	char * files [] =  {"Lisboa-1.png", "IST-1.png", "IST-2.png", "IST-3.png", "00841.png", "00844.png", "00846.png", "00849.png" }; 
-	/* length of the files array (number of files to be processed	 */
-	int nn_files = 8;
+char * files [] =  {"Lisboa-1.png", "IST-1.png", "IST-2.png", "IST-3.png", "00841.png", "00844.png", "00846.png", "00849.png" }; 
 
-	/* file name of the image created and to be saved on disk	 */
-	char out_file_name[100];
+void* thread_function(void*n_threads)
+{ 
+	twint *range = (twint *) n_threads;
 
-	/* input images */
-	gdImagePtr in_img,  watermark_img;
-	/* output images */
-	gdImagePtr out_thumb_img, out_resized_img, out_watermark_img;
-
-	/* creation of output directories */
-	if (create_directory(RESIZE_DIR) == 0){
-		fprintf(stderr, "Impossible to create %s directory\n", RESIZE_DIR);
-		exit(-1);
-	}
-	if (create_directory(THUMB_DIR) == 0){
-		fprintf(stderr, "Impossible to create %s directory\n", THUMB_DIR);
-		exit(-1);
-	}
-	if (create_directory(WATER_DIR) == 0){
-		fprintf(stderr, "Impossible to create %s directory\n", WATER_DIR);
-		exit(-1);
-	}
-
-    watermark_img = read_png_file("watermark.png");
-	if(watermark_img == NULL){
-		fprintf(stderr, "Impossible to read %s image\n", "watermark.png");
-		exit(-1);
-	}
-
-
-	/* 
-	 * Add the watermarks
-	 */
-	for (int i = 0; i < nn_files; i++){	
+	for (int i = range->n1; i < range->n2; i++){	
 
 	    printf("watermark  %s\n", files[i]);
 		/* load of the input file */
@@ -96,13 +56,10 @@ int main(){
 	}
 
 
-
-
-
 	/* 
 	 * To resize images and add watermark
 	 */
-	for (int i = 0; i < nn_files; i++){	
+	for (int i = range->n1; i < range->n2; i++){	
 
 		printf("resize %s\n", files[i]);
 		/* load of the input file */
@@ -135,7 +92,7 @@ int main(){
 	/* 
 	 * Add watermark and create thumbnails
 	 */
-	for (int i = 0; i < nn_files; i++){	
+	for (int i = range->n1; i < range->n2; i++){	
 
 	   	printf("thumbnail %s\n", files[i]);
 		/* load of the input file */
@@ -168,6 +125,62 @@ int main(){
 	}
 
 	gdImageDestroy(watermark_img);
+}
+
+
+/******************************************************************************
+ * main()
+ *
+ * Arguments: (none)
+ * Returns: 0 in case of sucess, positive number in case of failure
+ * Side-Effects: creates thumbnail, resized copy and watermarked copies
+ *               of images
+ *
+ * Description: implementation of the complex serial version 
+ *              This application only works for a fixed pre-defined set of files
+ *
+ *****************************************************************************/
+int main(){
+
+	twint ni1, ni2 ;
+	/* length of the files array (number of files to be processed	 */
+	int nn_files = 8;
+
+	/* file name of the image created and to be saved on disk	 */
+	char out_file_name[100];
+
+	/* input images */
+	gdImagePtr in_img,  watermark_img;
+	/* output images */
+	gdImagePtr out_thumb_img, out_resized_img, out_watermark_img;
+
+	/* creation of output directories */
+	if (create_directory(RESIZE_DIR) == 0){
+		fprintf(stderr, "Impossible to create %s directory\n", RESIZE_DIR);
+		exit(-1);
+	}
+	if (create_directory(THUMB_DIR) == 0){
+		fprintf(stderr, "Impossible to create %s directory\n", THUMB_DIR);
+		exit(-1);
+	}
+	if (create_directory(WATER_DIR) == 0){
+		fprintf(stderr, "Impossible to create %s directory\n", WATER_DIR);
+		exit(-1);
+	}
+
+    watermark_img = read_png_file("watermark.png");
+	if(watermark_img == NULL){
+		fprintf(stderr, "Impossible to read %s image\n", "watermark.png");
+		exit(-1);
+	}
+
+	for (int i = 0; i < n_threads; i++){
+
+	}
+
+
+
+
 	exit(0);
 }
 
