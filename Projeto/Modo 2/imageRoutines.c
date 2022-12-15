@@ -35,16 +35,11 @@ void resize_routine(char* file, char* out_image){
 
     /*Directory of output*/
     char out_file_name[100], waterName[100];
-    /* input images */
-	gdImagePtr in_img,  watermark_img;
+
 	/* output images */
 	gdImagePtr out_resized_img, out_watermark_img; 
-    /* load of the input file */
-    in_img = read_png_file(file);
-    if (in_img == NULL){
-        fprintf(stderr, "Impossible to read %s image\n", file);
-        return;
-    }
+
+
     /* resizes of each image */
     sprintf(waterName, "%s%s", water_dir, out_image);
     out_watermark_img = read_png_file(waterName);
@@ -71,16 +66,11 @@ void thumb_routine(char* file, char* out_image){
 
     /*Directory of output*/
     char out_file_name[100], waterName[100];
-    /* input images */
-	gdImagePtr in_img,  watermark_img;
+
 	/* output images */
 	gdImagePtr out_thumb_img, out_watermark_img; 
-    /* load of the input file */
-    in_img = read_png_file(file);
-    if (in_img == NULL){
-        fprintf(stderr, "Impossible to read %s image\n", file);
-        return;
-    }
+
+
     /* resizes of each image */
     sprintf(waterName, "%s%s", water_dir, out_image);
     out_watermark_img = read_png_file(waterName);

@@ -10,6 +10,7 @@
  *****************************************************************************/
 
 #include <math.h>
+#include <unistd.h>
 #include "imageRoutines.h"
 
 char **files;
@@ -17,17 +18,17 @@ char* resize_dir;
 char* thumb_dir;
 char* water_dir;
 
-typedef struct info{
+/* typedef struct info{
 	int n1;
 	pthread_t id;
-}info;
+}info; */
 
 void* water_thread(void* ni)
 { 
 
 	/* input images */
 	gdImagePtr  watermark_img;
-	char *out_image;
+	char *out_image, waterName[100];
 	int range = (int) ni;
 
 	watermark_img = read_png_file("watermark.png");
@@ -41,11 +42,18 @@ void* water_thread(void* ni)
 	for (int i = 0; i <range; i++){
 		for (int j = strlen(files[i]); j >= 0; j--){
 			out_image = &files[i][j];
-			if (files[i][j] == '/') break;
+			if (files[i][j -1] == '/') break;
 		}
-
+/* 
+		sprintf(waterName, "%s%s", water_dir, out_image);
+		if( access( waterName, F_OK ) != -1){
+		printf("%s encontrado\n", waterName);
+		}else{
+		printf("%s nao encontrado\n", waterName); */
+		
 	    printf("watermark  %s\n", files[i]);
 		whatermark_routine(files[i], out_image, watermark_img);
+		/* } */
 		
 	}
 
@@ -58,20 +66,27 @@ void* resize_thread(void* ni)
 { 
 
 	/* input images */
-	char *out_image;
-	info* tInfo = (info*) ni;
+	char *out_image, resizebName[100];
+	int range = (int) ni;
 
-	pthread_join(tInfo->id, NULL);
 
-	for (int i = 0; i < tInfo->n1; i++){	
+	for (int i = 0; i < range; i++){	
 
 		for (int j = strlen(files[i]); j >= 0; j--){
 			out_image = &files[i][j];
-			if (files[i][j] == '/') break;
+			if (files[i][j -1] == '/') break;
 		}
 
+		/* sprintf(resizebName, "%s%s", resize_dir, out_image);
+		if( access( resizebName, F_OK ) != -1){
+		printf("%s encontrado\n", resizebName);
+		}
+		else{
+		printf("%s nao encontrado\n", resizebName);
+		 */
 		printf("resize %s\n", files[i]);
 		resize_routine(files[i], out_image);
+		/* } */
 	}
 
 	return 0;
@@ -81,20 +96,27 @@ void* thumb_thread(void* ni)
 { 
 
 	/* input images */
-	char *out_image;
-	info* tInfo = (info*) ni;
+	char *out_image, thumbName[100];
+	int range = (int) ni;
 
-	pthread_join(tInfo->id, NULL);
 
-	for (int i = 0; i < tInfo->n1; i++){	
+	for (int i = 0; i < range; i++){	
 
 		for (int j = strlen(files[i]); j >= 0; j--){
 			out_image = &files[i][j];
-			if (files[i][j] == '/') break;
+			if (files[i][j -1] == '/') break;
 		}
 
+		/* sprintf(thumbName, "%s%s", thumb_dir, out_image);
+		if( access( thumbName, F_OK ) != -1){
+		printf("%s encontrado\n", thumbName);
+		}else{
+		printf("%s nao encontrado\n", thumbName); */
+		
 		printf("Thumbnail %s\n", files[i]);
 		thumb_routine(files[i], out_image);
+
+		/* } */
 	}
 
 	return 0;
@@ -118,7 +140,7 @@ int main(int argc, char* argv[]){
 	/* length of the files array (number of files to be processed	 */
 	int nn_files = 0;
 	int n_threads = 3;
-	info *tInfo;
+
 	if (n_threads <= 0) exit(-1);
 	if(argv[1][strlen(argv[1])] == '/') argv[1][strlen(argv[1])] = '\0';
 	char image[100];
@@ -130,6 +152,7 @@ int main(int argc, char* argv[]){
 	strcat(imageList,"/image-list.txt");
 	FILE *f = fopen(imageList, "r");
 	if (f == NULL){
+		printf("Impossivel abrir ficheiro %s", imageList);
 		exit(-1);
 	}
 
@@ -158,6 +181,7 @@ int main(int argc, char* argv[]){
 		strcpy(files[i], image);
 		i++;
 	}
+	fclose(f);
 	free(imageList);
 
 
@@ -194,16 +218,21 @@ int main(int argc, char* argv[]){
     
 	
 	pthread_create(&thread_id[0], NULL, water_thread, (void *) nn_files);
-	tInfo = (info*) malloc(sizeof(info));
-	tInfo->n1 = nn_files;
-	tInfo->id = thread_id[0];
-	pthread_create(&thread_id[1], NULL,resize_thread, (void*) tInfo);
-	pthread_create(&thread_id[1], NULL,thumb_thread, (void*) tInfo);
+	pthread_join(thread_id[0], NULL);
 
-	for (int i = 0; i < n_threads; i++)
-		pthread_join(thread_id[i],NULL);
+
+	pthread_create(&thread_id[1], NULL,resize_thread, (void *) nn_files);
+	pthread_create(&thread_id[2], NULL,thumb_thread, (void *) nn_files);
+
+	pthread_join(thread_id[1], NULL);
+	pthread_join(thread_id[2], NULL);
 
 	free(thread_id);
+	for(i = 0; i < nn_files; i++) free(files[i]);
+	free(files);
+	free(resize_dir);
+	free(thumb_dir);
+	free(water_dir);
 	exit(0);
 }
 
