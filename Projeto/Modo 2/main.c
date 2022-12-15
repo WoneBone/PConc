@@ -44,16 +44,15 @@ void* water_thread(void* ni)
 			out_image = &files[i][j];
 			if (files[i][j -1] == '/') break;
 		}
-/* 
+
 		sprintf(waterName, "%s%s", water_dir, out_image);
 		if( access( waterName, F_OK ) != -1){
 		printf("%s encontrado\n", waterName);
 		}else{
-		printf("%s nao encontrado\n", waterName); */
 		
 	    printf("watermark  %s\n", files[i]);
 		whatermark_routine(files[i], out_image, watermark_img);
-		/* } */
+		}
 		
 	}
 
@@ -77,16 +76,15 @@ void* resize_thread(void* ni)
 			if (files[i][j -1] == '/') break;
 		}
 
-		/* sprintf(resizebName, "%s%s", resize_dir, out_image);
+		sprintf(resizebName, "%s%s", resize_dir, out_image);
 		if( access( resizebName, F_OK ) != -1){
 		printf("%s encontrado\n", resizebName);
 		}
 		else{
-		printf("%s nao encontrado\n", resizebName);
-		 */
+		
 		printf("resize %s\n", files[i]);
 		resize_routine(files[i], out_image);
-		/* } */
+		}
 	}
 
 	return 0;
@@ -107,16 +105,15 @@ void* thumb_thread(void* ni)
 			if (files[i][j -1] == '/') break;
 		}
 
-		/* sprintf(thumbName, "%s%s", thumb_dir, out_image);
+		sprintf(thumbName, "%s%s", thumb_dir, out_image);
 		if( access( thumbName, F_OK ) != -1){
 		printf("%s encontrado\n", thumbName);
 		}else{
-		printf("%s nao encontrado\n", thumbName); */
 		
 		printf("Thumbnail %s\n", files[i]);
 		thumb_routine(files[i], out_image);
 
-		/* } */
+		}
 	}
 
 	return 0;

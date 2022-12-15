@@ -93,7 +93,7 @@ void thumb_routine(char* file, char* out_image){
             fprintf(stderr, "Impossible to thumnail %s image\n", file);
         }else{
             /* save resized */
-            sprintf(out_file_name, "%s%s", resize_dir, out_image);
+            sprintf(out_file_name, "%s%s", thumb_dir, out_image);
             if(write_png_file(out_thumb_img, out_file_name) == 0){
                 fprintf(stderr, "Impossible to write %s image\n", out_file_name);
             }
