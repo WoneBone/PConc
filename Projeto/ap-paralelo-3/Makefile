@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall 
 
 
-ap-paralelo-2: main.o imageRoutines.o image-lib.o
+ap-paralelo-3: main.o imageRoutines.o image-lib.o
 	$(CC) $(CFLAGS) -o ap-paralelo-3 main.o imageRoutines.o image-lib.o -lgd
 
 serial-basic.o: main.c image-lib.h
